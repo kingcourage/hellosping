@@ -16,11 +16,29 @@ public class StudentController {
 	@Resource 
 	StudentService studentService;
 	
+	/**
+	 * Handles HTTP GET requests to the "/hello" endpoint.
+	 * 
+	 * This method is mapped to the "/hello" URL path using the @RequestMapping annotation.
+	 * When this endpoint is accessed, it returns a String that likely represents a view name
+	 * for rendering a login page.
+	 * 
+	 * @return A String value "login", which may be used as a view name in a web application
+	 *         to display a login page or redirect to a login-related resource.
+	 */
 	@RequestMapping("/hello")
 	public String hello(){
 		return "login";
 	}
 		
+	/**
+	 * Handles the login process for a student.
+	 * 
+	 * @param student The Student object containing login credentials
+	 * @param model The Model object to add attributes for view rendering
+	 * @param request The HttpServletRequest object to retrieve request parameters
+	 * @return A String representing the view name to be rendered ("success" or "login")
+	 */
 	@RequestMapping("/login")
 	public String login(Student student,Model model,HttpServletRequest request){
 		Student stu = studentService.login(student);
