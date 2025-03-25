@@ -696,12 +696,24 @@
 		return getTab(container, which) != null;
 	}
 	
+	/**
+	 * Shows or hides the header of a tabs container
+	 * @param {HTMLElement} container - The tabs container element
+	 * @param {boolean} visible - Whether to show (true) or hide (false) the header
+	 * @returns {undefined} This method does not return a value
+	 */
 	function showHeader(container, visible){
 		var opts = $.data(container, 'tabs').options;
 		opts.showHeader = visible;
 		$(container).tabs('resize');
 	}
 	
+	/**
+	 * Shows or hides the tool element within a tabs container and resizes the tabs.
+	 * @param {string|HTMLElement} container - The container element or selector for the tabs.
+	 * @param {boolean} visible - Whether to show (true) or hide (false) the tool element.
+	 * @returns {void} This method does not return a value.
+	 */
 	function showTool(container, visible){
 		var tool = $(container).find('>.tabs-header>.tabs-tool');
 		if (visible){
@@ -713,6 +725,12 @@
 	}
 	
 	
+	/**
+	 * Initializes or manipulates tab functionality on selected elements.
+	 * @param {Object|string} options - Configuration options for tabs or method name to call
+	 * @param {*} [param] - Additional parameter for method calls
+	 * @returns {jQuery|*} The jQuery object for chaining or the result of a method call
+	 */
 	$.fn.tabs = function(options, param){
 		if (typeof options == 'string') {
 			return $.fn.tabs.methods[options](this, param);
@@ -742,6 +760,11 @@
 	};
 	
 	$.fn.tabs.methods = {
+		/**
+		 * Retrieves the options for the tabs component.
+		 * @param {jQuery} jq - The jQuery object representing the tabs container.
+		 * @returns {Object} The options object for the tabs component, with the 'selected' property updated to reflect the currently selected tab's index.
+		 */
 		options: function(jq){
 			var cc = jq[0];
 			var opts = $.data(cc, 'tabs').options;
@@ -752,6 +775,12 @@
 		tabs: function(jq){
 			return $.data(jq[0], 'tabs').tabs;
 		},
+		/**
+		 * Resizes the selected jQuery elements and updates their selected size.
+		 * @param {jQuery} jq - The jQuery object containing the elements to be resized.
+		 * @param {Object} param - The parameters for resizing the elements.
+		 * @returns {jQuery} The original jQuery object for chaining.
+		 */
 		resize: function(jq, param){
 			return jq.each(function(){
 				setSize(this, param);
@@ -763,6 +792,12 @@
 				addTab(this, options);
 			});
 		},
+		/**
+		 * Closes the specified tab or tabs in a jQuery object.
+		 * @param {jQuery} jq - The jQuery object containing the tab(s) to be closed.
+		 * @param {string|number} [which] - Specifies which tab to close. If not provided, closes the currently active tab.
+		 * @returns {jQuery} The original jQuery object for chaining.
+		 */
 		close: function(jq, which){
 			return jq.each(function(){
 				closeTab(this, which);
@@ -777,6 +812,12 @@
 		getSelected: function(jq){
 			return getSelectedTab(jq[0]);
 		},
+		/**
+		 * Selects a tab for each element in the jQuery collection.
+		 * @param {jQuery} jq - The jQuery object containing the tab elements.
+		 * @param {*} which - The tab to be selected. This can be an index, element, or selector.
+		 * @returns {jQuery} The original jQuery object for chaining.
+		 */
 		select: function(jq, which){
 			return jq.each(function(){
 				selectTab(this, which);
@@ -787,6 +828,12 @@
 				unselectTab(this, which);
 			});
 		},
+		/**
+		 * Checks if a specified property or element exists within a jQuery object.
+		 * @param {jQuery} jq - The jQuery object to check.
+		 * @param {string} which - The property or element to check for existence.
+		 * @returns {boolean} True if the specified property or element exists, false otherwise.
+		 */
 		exists: function(jq, which){
 			return exists(jq[0], which);
 		},
@@ -795,6 +842,12 @@
 				updateTab(this, options);
 			});
 		},
+		/**
+		 * Enables a specific tab in a jQuery UI Tabs widget
+		 * @param {jQuery} jq - jQuery object containing the tabs widget
+		 * @param {number|string} which - Index or selector of the tab to enable
+		 * @returns {jQuery} The jQuery object for chaining
+		 */
 		enableTab: function(jq, which){
 			return jq.each(function(){
 				var opts = $(this).tabs('getTab', which).panel('options');
@@ -809,6 +862,11 @@
 				opts.disabled = true;
 			});
 		},
+		/**
+		 * Shows the header for each element in the jQuery collection.
+		 * @param {jQuery} jq - The jQuery object containing the elements to process.
+		 * @returns {jQuery} The original jQuery object for chaining.
+		 */
 		showHeader: function(jq){
 			return jq.each(function(){
 				showHeader(this, true);
@@ -819,6 +877,11 @@
 				showHeader(this, false);
 			});
 		},
+		/**
+		 * Shows a tool for each element in the jQuery collection.
+		 * @param {jQuery} jq - The jQuery object containing the elements to show the tool for.
+		 * @returns {jQuery} The original jQuery object for chaining.
+		 */
 		showTool: function(jq){
 			return jq.each(function(){
 				showTool(this, true);
@@ -829,6 +892,12 @@
 				showTool(this, false);
 			});
 		},
+		/**
+		 * Scrolls the tab header by the specified amount of pixels
+		 * @param {jQuery} jq - The jQuery object representing the tab container
+		 * @param {number} deltaX - The number of pixels to scroll horizontally
+		 * @returns {jQuery} The jQuery object for chaining
+		 */
 		scrollBy: function(jq, deltaX){	// scroll the tab header by the specified amount of pixels
 			return jq.each(function(){
 				var opts = $(this).tabs('options');
@@ -848,6 +917,11 @@
 		}
 	};
 	
+	/**
+	 * Parses options for the tabs widget from the target element's attributes and data.
+	 * @param {HTMLElement} target - The DOM element to parse options from.
+	 * @returns {Object} An object containing the parsed options for the tabs widget.
+	 */
 	$.fn.tabs.parseOptions = function(target){
 		return $.extend({}, $.parser.parseOptions(target, [
 			'tools','toolPosition','tabPosition',
@@ -882,6 +956,12 @@
 		onBeforeClose: function(title, index){},
 		onClose: function(title, index){},
 		onAdd: function(title, index){},
+		/**
+		 * Updates the title at the specified index.
+		 * @param {string} title - The new title to be updated.
+		 * @param {number} index - The index at which to update the title.
+		 * @returns {void} This method does not return a value.
+		 */
 		onUpdate: function(title, index){},
 		onContextMenu: function(e, title, index){}
 	};

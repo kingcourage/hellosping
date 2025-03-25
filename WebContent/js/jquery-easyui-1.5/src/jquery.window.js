@@ -17,6 +17,14 @@
  * 
  */
 (function($){
+	/**
+	 * Moves a window element to a new position.
+	 * @param {HTMLElement} target - The DOM element of the window to be moved.
+	 * @param {Object} [param] - An optional object containing new position coordinates.
+	 * @param {number} [param.left] - The new left coordinate for the window.
+	 * @param {number} [param.top] - The new top coordinate for the window.
+	 * @returns {undefined} This method does not return a value.
+	 */
 	function moveWindow(target, param){
 		var state = $.data(target, 'window');
 		if (param){
@@ -64,6 +72,11 @@
 		if (tomove){moveWindow(target);}
 	}
 	
+	/**
+	 * Creates and initializes a window component with specified options.
+	 * @param {HTMLElement|string} target - The target element or selector to create the window for.
+	 * @returns {jQuery} The jQuery object representing the created window panel.
+	 */
 	function create(target){
 		var state = $.data(target, 'window');
 		var opts = state.options;
@@ -161,6 +174,14 @@
 		if (!closed){win.window('open');}
 	}
 
+	/**
+	 * Constrains the position and size of a window element within its parent container.
+	 * @param {number} left - The left coordinate of the window.
+	 * @param {number} top - The top coordinate of the window.
+	 * @param {number} width - The width of the window.
+	 * @param {number} height - The height of the window.
+	 * @returns {Object} An object containing the constrained left, top, width, and height values.
+	 */
 	function constrain(left, top, width, height){
 		var target = this;
 		var state = $.data(target, 'window');
@@ -206,6 +227,12 @@
 		state.window.draggable({
 			handle: '>div.panel-header>div.panel-title',
 			disabled: state.options.draggable == false,
+			/**
+			 * Handles actions before dragging the window starts.
+			 * Adjusts the z-index of mask, shadow, and window elements to ensure proper stacking order.
+			 * @param {Event} e - The event object triggered before dragging starts.
+			 * @returns {void} This method does not return a value.
+			 */
 			onBeforeDrag: function(e){
 				if (state.mask) state.mask.css('z-index', $.fn.window.defaults.zIndex++);
 				if (state.shadow) state.shadow.css('z-index', $.fn.window.defaults.zIndex++);
@@ -237,6 +264,15 @@
 			}
 		});
 
+		/**
+		 * Initializes and displays the window proxy and mask for a dragging or resizing operation.
+		 * @param {Object} e - The event object containing data for positioning and sizing.
+		 * @param {number} e.data.left - The left position for the proxy and mask.
+		 * @param {number} e.data.top - The top position for the proxy and mask.
+		 * @param {number} e.data.width - The width for the proxy.
+		 * @param {number} e.data.height - The height for the proxy.
+		 * @returns {undefined} This function does not return a value.
+		 */
 		function start1(e){
 			if (state.pmask){state.pmask.remove();}
 			state.pmask = $('<div class="window-proxy-mask"></div>').insertAfter(state.window);
@@ -274,6 +310,15 @@
 			state.proxy._outerWidth(e.data.width);
 			state.proxy._outerHeight(e.data.height);
 		}
+		/**
+		 * Stops the window resizing operation and applies the final size and position.
+		 * @param {Object} e - The event object containing the resizing data.
+		 * @param {number} e.data.left - The left position of the window.
+		 * @param {number} e.data.top - The top position of the window.
+		 * @param {number} e.data.width - The width of the window.
+		 * @param {number} e.data.height - The height of the window.
+		 * @returns {undefined} This method does not return a value.
+		 */
 		function stop1(e){
 			$.extend(e.data, constrain.call(target, e.data.left, e.data.top, e.data.width+0.1, e.data.height+0.1));
 			$(target).window('resize', e.data);
@@ -299,6 +344,12 @@
 		}
 	});
 	
+	/**
+	 * Creates or modifies a window element with specified options.
+	 * @param {string|object} options - If a string, it's the method name to call. If an object, it contains the options for the window.
+	 * @param {*} [param] - Additional parameter for the method call when options is a string.
+	 * @returns {jQuery|*} The jQuery object for chaining, or the result of the method call if options is a string.
+	 */
 	$.fn.window = function(options, param){
 		if (typeof options == 'string'){
 			var method = $.fn.window.methods[options];
@@ -328,6 +379,13 @@
 	};
 	
 	$.fn.window.methods = {
+		/**
+		 * Retrieves and combines options from both panel and window components.
+		 * @param {jQuery} jq - The jQuery object representing the target element.
+		 * @returns {Object} An object containing combined options from panel and window,
+		 *                   with specific properties (closed, collapsed, minimized, maximized)
+		 *                   overridden by panel options.
+		 */
 		options: function(jq){
 			var popts = jq.panel('options');
 			var wopts = $.data(jq[0], 'window').options;
@@ -341,6 +399,12 @@
 		window: function(jq){
 			return $.data(jq[0], 'window').window;
 		},
+		/**
+		 * Moves one or more elements in the jQuery object according to the specified parameters.
+		 * @param {jQuery} jq - The jQuery object containing the element(s) to be moved.
+		 * @param {Object} param - An object containing parameters for the move operation.
+		 * @returns {jQuery} The original jQuery object for chaining.
+		 */
 		move: function(jq, param){
 			return jq.each(function(){
 				moveWindow(this, param);
@@ -351,6 +415,11 @@
 				hcenter(this, true);
 			});
 		},
+		/**
+		 * Centers elements vertically within their containers.
+		 * @param {jQuery} jq - The jQuery object containing the elements to be centered.
+		 * @returns {jQuery} The original jQuery object for chaining.
+		 */
 		vcenter: function(jq){
 			return jq.each(function(){
 				vcenter(this, true);
@@ -365,6 +434,14 @@
 		}
 	};
 
+	/**
+	 * Gets the size of the mask for a window element.
+	 * @param {Object|string} target - The target window element or selector.
+	 * @returns {Object} An object containing the mask size properties.
+	 *                   If the window is inline, returns an empty object.
+	 *                   If position is fixed, returns {position: 'fixed'}.
+	 *                   Otherwise, returns {width: documentWidth, height: documentHeight}.
+	 */
 	$.fn.window.getMaskSize = function(target){
 		var state = $(target).data('window');
 		if (state && state.options.inline){
@@ -379,6 +456,11 @@
 		}
 	};
 	
+	/**
+	 * Parses options for a window element by extending panel options with specific window options.
+	 * @param {HTMLElement} target - The target element to parse options from.
+	 * @returns {Object} An object containing the parsed options for the window.
+	 */
 	$.fn.window.parseOptions = function(target){
 		return $.extend({}, $.fn.panel.parseOptions(target), $.parser.parseOptions(target, [
 			{draggable:'boolean',resizable:'boolean',shadow:'boolean',modal:'boolean',inline:'boolean'}
