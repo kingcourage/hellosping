@@ -124,7 +124,16 @@ if(!_2b["validator"].call(_20,_29,_2c)){
 var _2d=_2b["message"];
 if(_2c){
 for(var i=0;i<_2c.length;i++){
-_2d=_2d.replace(new RegExp("\\{"+i+"\\}","g"),_2c[i]);
+// Validate index and value
+if (typeof i === 'number' && i >= 0 && i < _2c.length) {
+// Add length limit for replacement value to prevent excessive memory usage
+var replacement = _2c[i];
+if (replacement && replacement.length > 1000) {  // arbitrary safe limit
+    replacement = replacement.substring(0, 1000);
+}
+// Use safer string split-join instead of dynamic RegExp
+_2d = _2d.split('{' + i + '}').join(replacement || '');
+}
 }
 }
 _25(_22.invalidMessage||_2d);
